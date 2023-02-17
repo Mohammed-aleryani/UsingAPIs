@@ -8,13 +8,29 @@ const DANCING_CAT_URL =
 
 function walk(img, startPos, stopPos) {
   return new Promise((resolve) => {
-    // Copy over the implementation from last week
+    let loction = startPos;
+    let walkToCenter=setInterval(()=>{
+      img.style.left=`${loction}px`;
+      loction += STEP_SIZE_PX;
+
+      if (loction >= stopPos){
+        clearInterval(walkToCenter)
+        resolve();
+      }
+    
+    },STEP_INTERVAL_MS)
   });
 }
 
 function dance(img) {
   return new Promise((resolve) => {
-    // Copy over the implementation from last week
+    let prvImgSrc=img.src;
+    img.src=DANCING_CAT_URL;
+    
+    setTimeout(()=>{
+      img.src=prvImgSrc;
+      resolve();
+    },DANCE_TIME_MS );
   });
 }
 
@@ -24,7 +40,18 @@ async function catWalk() {
   const centerPos = (window.innerWidth - img.width) / 2;
   const stopPos = window.innerWidth;
 
-  // Use async/await syntax to loop the walk and dance functions
+  while(true){
+      
+try {
+  await walk(img,startPos,centerPos);
+  await dance(img);
+  await walk(img,centerPos,stopPos);
+} catch (error) {
+  
+  console.log(error)
+}
+  }
+
 }
 
 window.addEventListener('load', catWalk);
